@@ -22,5 +22,29 @@ namespace VS_Workspacer.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string extensionsPath {
+            get {
+                return ((string)(this["extensionsPath"]));
+            }
+            set {
+                this["extensionsPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string disabledExtensionsPath {
+            get {
+                return ((string)(this["disabledExtensionsPath"]));
+            }
+            set {
+                this["disabledExtensionsPath"] = value;
+            }
+        }
     }
 }

@@ -47,12 +47,14 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.ItemHeight = 13;
             this.comboBox1.Location = new System.Drawing.Point(15, 52);
             this.comboBox1.MinimumSize = new System.Drawing.Size(200, 0);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(200, 21);
+            this.comboBox1.Sorted = true;
             this.comboBox1.TabIndex = 1;
             // 
             // button2
@@ -82,6 +84,7 @@
             // 
             // button1
             // 
+            this.button1.Enabled = false;
             this.button1.Location = new System.Drawing.Point(221, 50);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(40, 23);
@@ -98,6 +101,7 @@
             this.button3.TabIndex = 10;
             this.button3.Text = "Settings";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.Button3_Click);
             // 
             // MainForm
             // 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace VS_Workspacer
         {
             InitializeComponent();
             mf = (MainForm)sender;
+            listBox1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_DrawItem);
         }
         public WorkspaceAddOrEdit(Object sender,int WorkspaceIndex)
         {
@@ -28,32 +30,79 @@ namespace VS_Workspacer
             isEdit = true;
             mf = (MainForm)sender;
             index = WorkspaceIndex;
+            
+            listBox1.DrawItem += new DrawItemEventHandler(this.listBox_DrawItem);
+            
+            //listBox1.DrawMode = DrawMode.OwnerDrawFixed;
 
         }
-
-        private void WorkspaceAddOrEdit_Load(object sender, EventArgs e)
+        private void listBox_DrawItem(object sender, DrawItemEventArgs e)
         {
-            listBox1.Items.Clear();
+            if (e.Index == -1)
+                return;
 
-
-            if (mf.workspaces.Count > 0)
+            if (((ListBox) sender).Name == "listBox2")
             {
-                var result = mf.extensions.Where( i => mf.workspaces[index].extensions.All(y => i.Name != y.Name)).ToArray();
-                listBox1.Items.AddRange(result);
+                Debugger.Break();
             }
 
-            else
-                listBox1.Items.AddRange(mf.extensions.ToArray());
+            var item =  ((Extension)((ListBox)sender).Items[e.Index]);
+            // Draw the background of the ListBox control for each item.
+            e.DrawBackground();
+            //var rect = new Rectangle(e.Bounds.X + 10, e.Bounds.Y + 8, 16, 16);
+            var rect = new Rectangle(e.Bounds.X, e.Bounds.Y+5, 24, 24);
+            //assuming the icon is already added to project resources
 
+            try
+            {
+                Bitmap bitmap = (Bitmap)Image.FromFile(item.Icon);
+                e.Graphics.DrawIcon(Icon.FromHandle(bitmap.GetHicon()), rect);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+            
+
+            //e.Graphics.DrawIconUnstretched(new Icon("a.ico"), rect);
+            e.Graphics.DrawString(
+                item.Name.ToString(),
+                e.Font, Brushes.Black,
+                //new Rectangle(e.Bounds.X + 25, e.Bounds.Y + 10, e.Bounds.Width, e.Bounds.Height), 
+                new Rectangle(e.Bounds.X+25, e.Bounds.Y+10, e.Bounds.Width, e.Bounds.Height),
+                StringFormat.GenericDefault);
+            // If the ListBox has focus, draw a focus rectangle around the selected item.
+            e.DrawFocusRectangle();
+        }
+        private void WorkspaceAddOrEdit_Load(object sender, EventArgs e)
+        {
+            
+            
+            listBox1.Items.Clear();
 
             if (isEdit)
             {
+                label1.Text = "Edit Workspace";
+                button4.Text = "Save";
+                if (mf.workspaces.Count > 0)
+                {
+                    var result = mf.extensions.Where(i => mf.workspaces[index].extensions.All(y => i.Name != y.Name)).ToArray();
+                    listBox1.Items.AddRange(result);
+                }
+
+                else
+                    listBox1.Items.AddRange(mf.extensions.ToArray());
                 textBox1.Text = mf.workspaces[index].WorkspaceName;
                 listBox2.Items.AddRange(mf.workspaces[index].extensions.ToArray());
-
-
-
             }
+            else
+            {
+                listBox1.Items.AddRange(mf.extensions.ToArray());
+            }
+           
+
+
+        
 
             listBox1.DisplayMember = "Name";
             listBox2.DisplayMember = "Name";
@@ -67,11 +116,11 @@ namespace VS_Workspacer
             if (listBox1.SelectedIndices.Count > -1)
             {
 
-                List<Object> objects = listBox1.SelectedItems.Cast<Object>().ToList();
+                List<Extension> objects = listBox1.SelectedItems.Cast<Extension>().ToList();
 
 
                 //listBox1.SelectedItems
-                foreach (Object i in objects)
+                foreach (Extension i in objects)
                 {
                     listBox2.Items.Add(i);
                     listBox1.Items.Remove(i);

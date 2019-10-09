@@ -9,6 +9,7 @@ namespace VS_Workspacer
     {
         public String WorkspaceName { get; set; }
         public List<Extension> extensions;
+        public bool isActive { get; set; }
 
         public Workspace()
         {
@@ -48,6 +49,7 @@ namespace VS_Workspacer
     {
         
         public String Name { get; set; }
+        public String Icon { get; set; }
         public bool isActive { get; set; }
 
         public DirectoryInfo extensionFolder;
@@ -69,8 +71,22 @@ namespace VS_Workspacer
             if (extensionFolder==null)
                 return false;
 
-            extensionFolder.MoveTo(_destinationFolder);
-            extensionFolder = new DirectoryInfo(_destinationFolder);
+            if (extensionFolder.FullName == _destinationFolder)
+                return false;
+
+
+
+            try
+            {
+                extensionFolder.MoveTo(_destinationFolder);
+                extensionFolder = new DirectoryInfo(_destinationFolder);
+            }
+            catch (Exception)
+            {
+               
+            }
+            
+            
             return true;
         }
 
@@ -78,15 +94,18 @@ namespace VS_Workspacer
         {
             if (File.Exists(_path + "\\package.json"))
             {
+                extensionFolder = new DirectoryInfo(_path);
                 using (StreamReader r = new StreamReader(_path + "\\package.json"))
                 {
                     string json = r.ReadToEnd();
                     dynamic myarray = JsonConvert.DeserializeObject(json);
                     Name = myarray.name;
+                    Icon = extensionFolder.FullName+"\\"+ myarray.icon;
+                    Icon = Icon.Replace(@"/", @"\");
                     Console.WriteLine(myarray.name);
                 }
 
-                extensionFolder = new DirectoryInfo(_path);
+                
 
             }
             else
@@ -95,5 +114,6 @@ namespace VS_Workspacer
                 throw new Exception("Cant Find packages.json");
             }
         }
+       
     }
 }
